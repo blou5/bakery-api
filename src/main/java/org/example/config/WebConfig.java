@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Allow all paths
-                        .allowedOrigins("*") // Change to your frontend origin
+                        .allowedOrigins("http://localhost:4200/") // Change to your frontend origin
                         .allowedMethods("*")
                         .allowedHeaders("*");
             }
