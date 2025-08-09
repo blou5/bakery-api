@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Luka Buziu
+      changes:
+        - addColumn:
+            tableName: withdrawals
+            columns:
+              - column:
+                  name: person
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notes
+                  type: TEXT
+                  constraints:
+                    nullable: true

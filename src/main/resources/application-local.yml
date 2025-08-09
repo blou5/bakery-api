@@ -1,0 +1,5 @@
+spring:
+  docker:
+    compose:
+      file: bakery-docker/locally/docker-compose-base.yml
+

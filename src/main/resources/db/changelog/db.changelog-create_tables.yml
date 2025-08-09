@@ -1,0 +1,389 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: daily_cash_log
+            columns:
+              - column:
+                  name: log_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: log_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+              - column:
+                  name: opening_cash
+                  type: INT
+              - column:
+                  name: cash_withdrawn
+                  type: INT
+              - column:
+                  name: closing_cash
+                  type: INT
+              - column:
+                  name: notes
+                  type: VARCHAR(255)
+              - column:
+                  name: weather
+                  type: VARCHAR(100)
+              - column:
+                  name: holiday
+                  type: BOOLEAN
+              - column:
+                  name: holiday_type
+                  type: VARCHAR(100)
+              - column:
+                  name: expected_cash
+                  type: INT
+                  constraints:
+                    nullable: true
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: true
+                    checkConstraint: "status IN ('Equal', 'Less', 'More', 'Not Completed')"
+
+  - changeSet:
+      id: 2
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: withdrawals
+            columns:
+              - column:
+                  name: withdrawal_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: log_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reason
+                  type: VARCHAR(255)
+              - column:
+                  name: date
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: withdrawals
+            baseColumnNames: log_id
+            referencedTableName: daily_cash_log
+            referencedColumnNames: log_id
+            constraintName: fk_withdrawals_log_id
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 3
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: variable_expense_headers
+            columns:
+              - column:
+                  name: expense_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: log_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expense_type
+                  type: VARCHAR(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: notes
+                  type: VARCHAR(255)
+              - column:
+                  name: expense_date
+                  type: DATE
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: variable_expense_headers
+            baseColumnNames: log_id
+            referencedTableName: daily_cash_log
+            referencedColumnNames: log_id
+            constraintName: fk_variable_expense_log_id
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 4
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: variable_expense_items
+            columns:
+              - column:
+                  name: item_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: expense_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: item_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_price
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: total_price
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: variable_expense_items
+            baseColumnNames: expense_id
+            referencedTableName: variable_expense_headers
+            referencedColumnNames: expense_id
+            constraintName: fk_expense_items_expense_id
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 5
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: product_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: product_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: selling_price
+                  type: INT
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 6
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: product_production
+            columns:
+              - column:
+                  name: production_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: log_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: product_id
+                  type: INT
+                  constraints:
+              - column:
+                  name: quantity_produced
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: product_production
+            baseColumnNames: log_id
+            referencedTableName: daily_cash_log
+            referencedColumnNames: log_id
+            constraintName: fk_production_log_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: product_production
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: product_id
+            constraintName: fk_production_product_id
+
+  - changeSet:
+      id: 7
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: unsold_products
+            columns:
+              - column:
+                  name: unsold_id
+                  type: INT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: log_id
+                  type: INT
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: product_id
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: quantity_unsold
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: unit_cost
+                  type: INT
+                  constraints:
+                    nullable: false
+        - addForeignKeyConstraint:
+            baseTableName: unsold_products
+            baseColumnNames: log_id
+            referencedTableName: daily_cash_log
+            referencedColumnNames: log_id
+            constraintName: fk_unsold_log_id
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: unsold_products
+            baseColumnNames: product_id
+            referencedTableName: products
+            referencedColumnNames: product_id
+            constraintName: fk_unsold_product_id
+
+
+  - changeSet:
+      id: 8
+      author: Luka Buziu
+      changes:
+        - createTable:
+            tableName: change_reserve_log
+            columns:
+              - column:
+                  name: reserve_log_id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: denomination
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    checkConstraint: "denomination IN (5 ,10, 20, 50, 100)"
+              - column:
+                  name: quantity
+                  type: INT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: reserve_type
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+                    checkConstraint: "reserve_type IN ('ADDITION', 'SUBTRACTION')"
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+                    checkConstraint: "status IN ('PENDING', 'LIQUIDIFIED')"
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  defaultValueComputed: CURRENT_TIMESTAMP
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status_changed_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: true
+
+  - changeSet:
+      id: 9
+      author: Luka Buziu
+      changes:
+        - createSequence:
+            sequenceName: daily_cash_log_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: change_reserve_log_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: products_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: product_production_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: unsold_products_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: variable_expense_headers_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: withdrawals_seq
+            startValue: 1
+        - createSequence:
+            sequenceName: variable_expense_items_seq
+            startValue: 1
