@@ -1,4 +1,5 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
+import org.gradle.testing.jacoco.plugins.JacocoTaskExtension
 
 plugins {
     id("java")
@@ -45,6 +46,29 @@ dependencies {
 }
 
 tasks.test {
+    include ("**/*Test.class")
+    include("**/*Test.class")
+
+
+    testLogging {
+        showStandardStreams = true
+    }
+
+    reports {
+        junitXml.required.set(true)
+        html.required.set(true)
+    }
+
+    extensions.configure<JacocoTaskExtension> {
+          layout.buildDirectory
+            .file("jacoco/jacoco-unit-test.exec")
+            .get()
+            .asFile
+        // optional:
+        // classDumpDir = layout.buildDirectory.dir("jacoco/classdump").get().asFile
+    }
+
+    finalizedBy(tasks.jacocoTestReport)
     useJUnitPlatform()
 }
 tasks.named<BootJar>("bootJar") {
