@@ -95,7 +95,7 @@ tasks.jacocoTestReport {
 sonar {
     properties {
         property("sonar.projectKey", "blou5_bakery-api")
-        property("sonar.organization", "bakery-api")
+        property("sonar.organization", "blou5")
         property("sonar.host.url", "https://sonarcloud.io")
         property(
             "sonar.exclusions",
