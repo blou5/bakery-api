@@ -20,5 +20,4 @@ volumes:
   pgdata:
 
 networks:
-  springnet:
-    driver: bridge
+  springnet: {}

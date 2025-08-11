@@ -24,13 +24,13 @@ spring:
       initialization-fail-timeout: 60000
       register-mbeans: true
     driver-class-name: org.postgresql.Driver
-    url: ${DATABASE_URL:jdbc:postgresql://localhost/bakery_shop}
+    url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/bakery_shop}   # fallback not localhost
     username: ${DATABASE_USER:bakery}
-    password: ${DATABASE_PASSWORD:N&LBAKERY}
+    password: ${DATABASE_PASSWORD:"N&LBAKERY"}
 
-  docker:
-    compose:
-      file: bakery-docker/locally/docker-compose-base.yml
+#  docker:
+#    compose:
+#      file: bakery-docker/locally/docker-compose-base.yml
 
 management:
   endpoints:

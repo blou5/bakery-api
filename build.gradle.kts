@@ -1,7 +1,11 @@
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("java")
     id("org.springframework.boot") version "3.5.0"
     id("io.spring.dependency-management") version "1.1.4"
+    kotlin("jvm") version "1.9.24"                 // if using Kotlin
+    kotlin("plugin.spring") version "1.9.24"
 }
 
 group = "org.example"
@@ -10,6 +14,7 @@ version = "1.0-SNAPSHOT"
 java {
     sourceCompatibility = JavaVersion.VERSION_21
     targetCompatibility = JavaVersion.VERSION_21
+    toolchain { languageVersion.set(JavaLanguageVersion.of(21)) }
 }
 
 repositories {
@@ -39,4 +44,17 @@ dependencies {
 
 tasks.test {
     useJUnitPlatform()
+}
+tasks.named<BootJar>("bootJar") {
+    layered {
+        // Ensure the jar is written with layers + layertools so we can `extract`
+        isEnabled = true
+        includeTools = true
+        // Optional: Override default order (usually not necessary)
+        // layerOrder.set(listOf("dependencies", "spring-boot-loader", "snapshot-dependencies", "application"))
+    }
+}
+
+springBoot {
+    mainClass.set("org.example.Main")
 }

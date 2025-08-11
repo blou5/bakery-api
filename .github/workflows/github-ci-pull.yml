@@ -5,12 +5,12 @@ on:
     branches: [ "master" ]
     paths:
       - "src/**"
-      - "arg-docker/**"
+      - "backery-docker/**"
   pull_request:
     branches: [ "master" ]
     paths:
       - "src/**"
-      - "arg-docker/**"
+      - "backery-docker/**"
   workflow_dispatch:
     inputs:
       sync:
@@ -19,7 +19,7 @@ on:
         default: "delta"
 jobs:
   ci:
-    uses: quantum-pixel-team/ci-cd-templates/.github/workflows/api-ci-gradle.yml@master
+    uses: blou5/continu-integ-deve/.github/workflows/api-ci-gradle.yml@master
     secrets:
       git_token: ${{ secrets.GITHUB_TOKEN }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -27,11 +27,11 @@ jobs:
   cd-dev:
     needs: ci
     #    if: github.event_name  == 'push'
-    uses: quantum-pixel-team/ci-cd-templates/.github/workflows/common-cd.yml@master
+    uses: blou5/continu-integ-deve/.github/workflows/common-cd.yml@master
     with:
       environment: dev
       docker-file-path: "Dockerfile"
-      tag: "blou5/arg-api:latest"
+      tag: "BuziuL/bakery-api:latest"
       local-path: "arg-docker/dev"
       remote-path: "/home/arg/api"
       artifact-path: "build/libs"

@@ -4,8 +4,6 @@ include:
 
 
 services:
-
-
   pgadmin:
     image: dpage/pgadmin4
     container_name: pgadmin_container
@@ -16,17 +14,28 @@ services:
       - "5050:80"
     depends_on:
       - postgres
-    networks:
-      - springnet
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U bakery -d bakery_shop" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+    networks: [springnet]
 
   bakery-api:
     build:
-      context: .
+      context: ../..
       dockerfile: Dockerfile
+    environment:
+#      SPRING_PROFILES_ACTIVE: local
+      DATABASE_URL: jdbc:postgresql://postgres:5432/bakery_shop   # <-- service name, not localhost
+      DATABASE_USER: bakery
+      DATABASE_PASSWORD: "N&LBAKERY"
     ports:
       - "8080:8080"
     depends_on:
       - postgres
+    networks: [springnet]
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
       interval: 10s
