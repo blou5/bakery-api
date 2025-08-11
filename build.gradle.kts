@@ -6,8 +6,8 @@ plugins {
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.24"                 // if using Kotlin
     kotlin("plugin.spring") version "1.9.24"
-    id("org.sonarqube") version "4.4.1.3373" // latest at time of writing
-
+    id("org.sonarqube") version "6.2.0.5505"
+    jacoco
 }
 
 group = "org.example"
@@ -61,6 +61,12 @@ springBoot {
     mainClass.set("org.example.Main")
 }
 
+tasks.jacocoTestReport {
+    reports {
+        xml.required.set(true)  // Sonar reads XML
+        html.required.set(true)
+    }
+}
 
 sonar {
     properties {
@@ -70,6 +76,11 @@ sonar {
         property(
             "sonar.exclusions",
             "**/model/**,build/generated/**/*,build/generated-api/**/*,**/Application.*,**/config/**"
+        )
+        property("sonar.java.coveragePlugin", "jacoco")
+        property(
+            "sonar.coverage.jacoco.xmlReportPaths",
+            "${layout.buildDirectory.get()}/reports/jacoco/test/jacocoTestReport.xml"
         )
     }
 }
