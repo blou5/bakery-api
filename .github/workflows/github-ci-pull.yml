@@ -19,7 +19,7 @@ on:
         default: "delta"
 jobs:
   ci:
-    uses: blou5/continu-integ-deve/.github/workflows/api-ci-gradle.yml@taks-1/remove-deploy
+    uses: blou5/continu-integ-deve/.github/workflows/api-ci-gradle.yml@task-1/remove-deploy
     secrets:
       git_token: ${{ secrets.GITHUB_TOKEN }}
       sonar_token: ${{ secrets.SONAR_TOKEN }}
@@ -27,7 +27,7 @@ jobs:
   cd-dev:
     needs: ci
     #    if: github.event_name  == 'push'
-    uses: blou5/continu-integ-deve/.github/workflows/common-cd.yml@taks-1/remove-deploy
+    uses: blou5/continu-integ-deve/.github/workflows/common-cd.yml@task-1/remove-deploy
     with:
       environment: dev
       docker-file-path: "Dockerfile"
