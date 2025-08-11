@@ -86,6 +86,7 @@ springBoot {
 }
 
 tasks.jacocoTestReport {
+    dependsOn(tasks.test)
     reports {
         xml.required.set(true)  // Sonar reads XML
         html.required.set(true)
