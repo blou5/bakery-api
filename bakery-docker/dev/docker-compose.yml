@@ -1,0 +1,59 @@
+version: '3.8'
+include:
+  - docker-compose-base.yml
+
+
+services:
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U bakery -d bakery_shop" ]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+    networks: [springnet]
+
+  bakery-api:
+    image: buziul/bakery-api:latest
+    environment:
+#      SPRING_PROFILES_ACTIVE: local
+      DATABASE_URL: jdbc:postgresql://postgres:5432/bakery_shop   # <-- service name, not localhost
+      DATABASE_USER: ${BAKERY_API_DB_USER}
+      DATABASE_PASSWORD: ${BAKERY_API_DB_PASSWORD}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks: [springnet]
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: metabase
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: ${POSTGRES_DB}
+      MB_DB_PORT: ${POSTGRES_PORT}
+      MB_DB_USER: ${POSTGRES_USER}
+      MB_DB_PASS: ${POSTGRES_PASSWORD}
+      MB_DB_HOST: postgres
+
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks: [springnet]

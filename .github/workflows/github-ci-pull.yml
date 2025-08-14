@@ -32,11 +32,11 @@ jobs:
       environment: dev
       docker-file-path: "Dockerfile"
       tag: "buziul/bakery-api:latest"
-      local-path: "arg-docker/dev"
-      remote-path: "/home/arg/api"
+      local-path: "bakery-docker/dev"
+      remote-path: "/home/bakery/api"
       artifact-path: "build/libs"
       deploy-script: "
-              cd /home/arg/api &&
+              cd /home/bakery/api &&
                docker compose pull &&
               docker compose up -d"
     secrets:
