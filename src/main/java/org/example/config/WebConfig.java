@@ -13,10 +13,13 @@ public class WebConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**") // Allow all paths
-                        .allowedOrigins("http://localhost:4200/") // Change to your frontend origin
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
+                registry.addMapping("/**")
+                        .allowedOrigins("http://178.18.249.39:4200") // <- no trailing slash
+                        .allowedMethods("GET","POST","PUT","PATCH","DELETE","OPTIONS")
+                        .allowedHeaders("*")
+                        .exposedHeaders("Authorization","Content-Disposition")
+                        .allowCredentials(true)      // set to false if you don’t use cookies/Authorization
+                        .maxAge(3600);
             }
         };
     }
