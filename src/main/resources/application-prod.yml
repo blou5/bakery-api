@@ -1,8 +1,8 @@
-spring:
-  docker:
-    compose:
-      file: bakery-docker/locally/docker-compose-base.yml
+#spring:
+#  docker:
+#    compose:
+#      file: bakery-docker/locally/docker-compose-base.yml
 
-app:
+spring:
   cors:
     allowed-origins: "http://178.18.249.39:4200"
