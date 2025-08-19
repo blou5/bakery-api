@@ -25,7 +25,7 @@ services:
   bakery-api:
     image: buziul/bakery-api:latest
     environment:
-#      SPRING_PROFILES_ACTIVE: local
+      SPRING_PROFILES_ACTIVE: prod
       DATABASE_URL: jdbc:postgresql://postgres:5432/bakery_shop   # <-- service name, not localhost
       DATABASE_USER: ${BAKERY_API_DB_USER}
       DATABASE_PASSWORD: ${BAKERY_API_DB_PASSWORD}

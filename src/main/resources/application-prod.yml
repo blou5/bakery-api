@@ -3,3 +3,6 @@ spring:
     compose:
       file: bakery-docker/locally/docker-compose-base.yml
 
+app:
+  cors:
+    allowed-origins: "http://178.18.249.39:4200"

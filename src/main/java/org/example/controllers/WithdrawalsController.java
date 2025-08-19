@@ -5,10 +5,12 @@ import org.example.dto.request.create.WithdrawalsCreateDto;
 import org.example.dto.request.update.WithdrawalsUpdateDTO;
 import org.example.entity.Withdrawals;
 import org.example.services.WithdrawalsService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -42,6 +44,12 @@ public class WithdrawalsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
+    @GetMapping("/filteredWithdrawals/{date}")
+    public ResponseEntity<List<Withdrawals>> getFilteredWithdrawals(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+
+        List<Withdrawals> withdrawFromDate = this.withdrawalsService.getWithdrawFromDate(date);
+        return ResponseEntity.ok().body(withdrawFromDate);
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Withdrawals> updateWithdrawal(

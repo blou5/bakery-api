@@ -16,3 +16,12 @@ databaseChangeLog:
                   type: TEXT
                   constraints:
                     nullable: true
+
+  - changeSet:
+      id: 2
+      author: Luka Buziu
+      changes:
+        - modifyDataType:
+            tableName: withdrawals
+            columnName: date  # <-- replace with the actual column name
+            newDataType: DATE

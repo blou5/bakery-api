@@ -27,7 +27,7 @@ services:
       context: ../..
       dockerfile: Dockerfile
     environment:
-#      SPRING_PROFILES_ACTIVE: local
+      SPRING_PROFILES_ACTIVE: locally
       DATABASE_URL: jdbc:postgresql://postgres:5432/bakery_shop   # <-- service name, not localhost
       DATABASE_USER: bakery
       DATABASE_PASSWORD: "N&LBAKERY"

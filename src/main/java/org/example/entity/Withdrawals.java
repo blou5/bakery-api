@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -28,7 +29,7 @@ public class Withdrawals {
     private String reason;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     private String person;
     private String notes;
