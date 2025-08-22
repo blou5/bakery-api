@@ -14,10 +14,11 @@ spring:
         generate_statistics: false
         default_schema: public
         format_sql: true
+        ddl-auto: none
     show-sql: ${SHOW_SQL:false}
   liquibase:
    change-log: classpath:db/changelog/db.changelog-master.yml
-   drop-first: false
+   enabled: true
   datasource:
     hikari:
       maximum-pool-size: 15
