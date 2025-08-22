@@ -18,6 +18,7 @@ spring:
     show-sql: ${SHOW_SQL:false}
   liquibase:
    change-log: classpath:db/changelog/db.changelog-master.yml
+   default-schema: public
   datasource:
     hikari:
       maximum-pool-size: 15
