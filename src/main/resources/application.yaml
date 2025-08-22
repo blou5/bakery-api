@@ -28,14 +28,14 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/bakery_shop}   # fallback not localhost
     username: ${DATABASE_USER:bakery}
     password: ${DATABASE_PASSWORD:"N&LBAKERY"}
-  profiles:
-    active: local
+#  profiles:
+#    active: local
 
-  docker:
-    compose:
-      file: bakery-docker/locally/docker-compose-base.yml
-  cors:
-    allowed-origins: "http://localhost:4200"
+#  docker:
+#    compose:
+#      file: bakery-docker/locally/docker-compose-base.yml
+#  cors:
+#    allowed-origins: "http://localhost:4200"
 management:
   endpoints:
     web:
