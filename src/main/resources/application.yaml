@@ -16,9 +16,8 @@ spring:
         format_sql: true
         ddl-auto: none
     show-sql: ${SHOW_SQL:false}
-#  liquibase:
-#   change-log: classpath:db/changelog/db.changelog-master.yml
-#   enabled: true
+  liquibase:
+   change-log: classpath:db/changelog/db.changelog-master.yml
   datasource:
     hikari:
       maximum-pool-size: 15
@@ -29,12 +28,14 @@ spring:
     url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/bakery_shop}   # fallback not localhost
     username: ${DATABASE_USER:bakery}
     password: ${DATABASE_PASSWORD:"N&LBAKERY"}
+  profiles:
+    active: local
 
-#  docker:
-#    compose:
-#      file: bakery-docker/locally/docker-compose-base.yml
-#  cors:
-#    allowed-origins: "http://localhost:4200"
+  docker:
+    compose:
+      file: bakery-docker/locally/docker-compose-base.yml
+  cors:
+    allowed-origins: "http://localhost:4200"
 management:
   endpoints:
     web:

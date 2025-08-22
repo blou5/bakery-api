@@ -1,3 +1,6 @@
 spring:
   cors:
     allowed-origins: "http://localhost:4200"
+#  docker:
+#    compose:
+#      file: bakery-docker/locally/docker-compose-base.yml
