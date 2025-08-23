@@ -1,88 +1,158 @@
 databaseChangeLog:
+
+  # ============ TABLES ============
+
   - changeSet:
       id: 1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: daily_cash_log } }
       changes:
         - createTable:
             tableName: daily_cash_log
             columns:
-              - column:
-                  name: log_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: log_date
-                  type: DATE
-                  constraints:
-                    nullable: false
-              - column:
-                  name: opening_cash
-                  type: INT
-              - column:
-                  name: cash_withdrawn
-                  type: INT
-              - column:
-                  name: closing_cash
-                  type: INT
-              - column:
-                  name: notes
-                  type: VARCHAR(255)
-              - column:
-                  name: weather
-                  type: VARCHAR(100)
-              - column:
-                  name: holiday
-                  type: BOOLEAN
-              - column:
-                  name: holiday_type
-                  type: VARCHAR(100)
-              - column:
-                  name: expected_cash
-                  type: INT
-                  constraints:
-                    nullable: true
+              - column: { name: log_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: log_date, type: DATE, constraints: { nullable: false } }
+              - column: { name: opening_cash, type: INT }
+              - column: { name: cash_withdrawn, type: INT }
+              - column: { name: closing_cash, type: INT }
+              - column: { name: notes, type: VARCHAR(255) }
+              - column: { name: weather, type: VARCHAR(100) }
+              - column: { name: holiday, type: BOOLEAN }
+              - column: { name: holiday_type, type: VARCHAR(100) }
+              - column: { name: expected_cash, type: INT, constraints: { nullable: true } }
               - column:
                   name: status
                   type: VARCHAR(20)
                   constraints:
                     nullable: true
-                    checkConstraint: "status IN ('Equal', 'Less', 'More', 'Not Completed')"
+                    checkConstraint: "status IN ('Equal','Less','More','Not Completed')"
 
   - changeSet:
       id: 2
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: withdrawals } }
       changes:
         - createTable:
             tableName: withdrawals
             columns:
-              - column:
-                  name: withdrawal_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: log_id
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: amount
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: reason
-                  type: VARCHAR(255)
-              - column:
-                  name: date
-                  type: DATETIME
-                  constraints:
-                    nullable: false
+              - column: { name: withdrawal_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: log_id, type: INT, constraints: { nullable: false } }
+              - column: { name: amount, type: INT, constraints: { nullable: false } }
+              - column: { name: reason, type: VARCHAR(255) }
+              - column: { name: date, type: TIMESTAMP, constraints: { nullable: false } }  # PostgreSQL
+
+  - changeSet:
+      id: 3
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: variable_expense_headers } }
+      changes:
+        - createTable:
+            tableName: variable_expense_headers
+            columns:
+              - column: { name: expense_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: log_id, type: INT, constraints: { nullable: false } }
+              - column: { name: total_price, type: INT, constraints: { nullable: false } }
+              - column: { name: expense_type, type: VARCHAR(100), constraints: { nullable: false } }
+              - column: { name: notes, type: VARCHAR(255) }
+              - column: { name: expense_date, type: DATE, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 4
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: variable_expense_items } }
+      changes:
+        - createTable:
+            tableName: variable_expense_items
+            columns:
+              - column: { name: item_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: expense_id, type: INT, constraints: { nullable: false } }
+              - column: { name: item_name, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: quantity, type: INT, constraints: { nullable: false } }
+              - column: { name: unit, type: INT, constraints: { nullable: false } }
+              - column: { name: unit_price, type: INT, constraints: { nullable: false } }
+              - column: { name: total_price, type: INT, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 5
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: products } }
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column: { name: product_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: product_name, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: selling_price, type: INT, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 6
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: product_production } }
+      changes:
+        - createTable:
+            tableName: product_production
+            columns:
+              - column: { name: production_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: log_id, type: INT, constraints: { nullable: false } }
+              - column: { name: product_id, type: INT, constraints: { nullable: false } }
+              - column: { name: quantity_produced, type: INT, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 7
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: unsold_products } }
+      changes:
+        - createTable:
+            tableName: unsold_products
+            columns:
+              - column: { name: unsold_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: log_id, type: INT, constraints: { nullable: false } }
+              - column: { name: product_id, type: INT, constraints: { nullable: false } }
+              - column: { name: quantity_unsold, type: INT, constraints: { nullable: false } }
+              - column: { name: unit_cost, type: INT, constraints: { nullable: false } }
+
+  - changeSet:
+      id: 8
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { tableExists: { schemaName: public, tableName: change_reserve_log } }
+      changes:
+        - createTable:
+            tableName: change_reserve_log
+            columns:
+              - column: { name: reserve_log_id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: denomination, type: BIGINT, constraints: { nullable: false, checkConstraint: "denomination IN (5,10,20,50,100)" } }
+              - column: { name: quantity, type: INT, constraints: { nullable: false } }
+              - column: { name: amount, type: BIGINT, constraints: { nullable: false } }
+              - column: { name: reserve_type, type: VARCHAR(50), constraints: { nullable: false, checkConstraint: "reserve_type IN ('ADDITION','SUBTRACTION')" } }
+              - column: { name: status, type: VARCHAR(20), constraints: { nullable: false, checkConstraint: "status IN ('PENDING','LIQUIDIFIED')" } }
+              - column: { name: created_at, type: TIMESTAMP, defaultValueComputed: CURRENT_TIMESTAMP, constraints: { nullable: false } }
+              - column: { name: status_changed_at, type: TIMESTAMP, constraints: { nullable: true } }
+
+  # ============ FKs (guarded) ============
+
+  - changeSet:
+      id: 2-fk1
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_withdrawals_log_id } }
+      changes:
         - addForeignKeyConstraint:
             baseTableName: withdrawals
             baseColumnNames: log_id
@@ -92,42 +162,12 @@ databaseChangeLog:
             onDelete: CASCADE
 
   - changeSet:
-      id: 3
+      id: 3-fk1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_variable_expense_log_id } }
       changes:
-        - createTable:
-            tableName: variable_expense_headers
-            columns:
-              - column:
-                  name: expense_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: log_id
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: total_price
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: expense_type
-                  type: VARCHAR(100)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: notes
-                  type: VARCHAR(255)
-              - column:
-                  name: expense_date
-                  type: DATE
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: variable_expense_headers
             baseColumnNames: log_id
@@ -137,49 +177,12 @@ databaseChangeLog:
             onDelete: CASCADE
 
   - changeSet:
-      id: 4
+      id: 4-fk1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_expense_items_expense_id } }
       changes:
-        - createTable:
-            tableName: variable_expense_items
-            columns:
-              - column:
-                  name: item_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: expense_id
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: item_name
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: quantity
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_price
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: total_price
-                  type: INT
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: variable_expense_items
             baseColumnNames: expense_id
@@ -189,58 +192,12 @@ databaseChangeLog:
             onDelete: CASCADE
 
   - changeSet:
-      id: 5
+      id: 6-fk1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_production_log_id } }
       changes:
-        - createTable:
-            tableName: products
-            columns:
-              - column:
-                  name: product_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: product_name
-                  type: VARCHAR(255)
-                  constraints:
-                    nullable: false
-              - column:
-                  name: selling_price
-                  type: INT
-                  constraints:
-                    nullable: false
-
-  - changeSet:
-      id: 6
-      author: Luka Buziu
-      changes:
-        - createTable:
-            tableName: product_production
-            columns:
-              - column:
-                  name: production_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: log_id
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: product_id
-                  type: INT
-                  constraints:
-              - column:
-                  name: quantity_produced
-                  type: INT
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: product_production
             baseColumnNames: log_id
@@ -248,6 +205,14 @@ databaseChangeLog:
             referencedColumnNames: log_id
             constraintName: fk_production_log_id
             onDelete: CASCADE
+
+  - changeSet:
+      id: 6-fk2
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_production_product_id } }
+      changes:
         - addForeignKeyConstraint:
             baseTableName: product_production
             baseColumnNames: product_id
@@ -256,40 +221,12 @@ databaseChangeLog:
             constraintName: fk_production_product_id
 
   - changeSet:
-      id: 7
+      id: 7-fk1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_unsold_log_id } }
       changes:
-        - createTable:
-            tableName: unsold_products
-            columns:
-              - column:
-                  name: unsold_id
-                  type: INT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: log_id
-                  type: INT
-                  constraints:
-                    nullable: false
-
-              - column:
-                  name: product_id
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: quantity_unsold
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: unit_cost
-                  type: INT
-                  constraints:
-                    nullable: false
         - addForeignKeyConstraint:
             baseTableName: unsold_products
             baseColumnNames: log_id
@@ -297,6 +234,14 @@ databaseChangeLog:
             referencedColumnNames: log_id
             constraintName: fk_unsold_log_id
             onDelete: CASCADE
+
+  - changeSet:
+      id: 7-fk2
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { foreignKeyConstraintExists: { schemaName: public, foreignKeyName: fk_unsold_product_id } }
+      changes:
         - addForeignKeyConstraint:
             baseTableName: unsold_products
             baseColumnNames: product_id
@@ -304,86 +249,76 @@ databaseChangeLog:
             referencedColumnNames: product_id
             constraintName: fk_unsold_product_id
 
+  # ============ SEQUENCES (guarded) ============
 
   - changeSet:
-      id: 8
+      id: 9-seq1
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: daily_cash_log_seq } }
       changes:
-        - createTable:
-            tableName: change_reserve_log
-            columns:
-              - column:
-                  name: reserve_log_id
-                  type: BIGINT
-                  autoIncrement: true
-                  constraints:
-                    primaryKey: true
-                    nullable: false
-              - column:
-                  name: denomination
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-                    checkConstraint: "denomination IN (5 ,10, 20, 50, 100)"
-              - column:
-                  name: quantity
-                  type: INT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: amount
-                  type: BIGINT
-                  constraints:
-                    nullable: false
-              - column:
-                  name: reserve_type
-                  type: VARCHAR(50)
-                  constraints:
-                    nullable: false
-                    checkConstraint: "reserve_type IN ('ADDITION', 'SUBTRACTION')"
-              - column:
-                  name: status
-                  type: VARCHAR(20)
-                  constraints:
-                    nullable: false
-                    checkConstraint: "status IN ('PENDING', 'LIQUIDIFIED')"
-              - column:
-                  name: created_at
-                  type: TIMESTAMP
-                  defaultValueComputed: CURRENT_TIMESTAMP
-                  constraints:
-                    nullable: false
-              - column:
-                  name: status_changed_at
-                  type: TIMESTAMP
-                  constraints:
-                    nullable: true
+        - createSequence: { sequenceName: daily_cash_log_seq, startValue: 1 }
 
   - changeSet:
-      id: 9
+      id: 9-seq2
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: change_reserve_log_seq } }
       changes:
-        - createSequence:
-            sequenceName: daily_cash_log_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: change_reserve_log_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: products_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: product_production_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: unsold_products_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: variable_expense_headers_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: withdrawals_seq
-            startValue: 1
-        - createSequence:
-            sequenceName: variable_expense_items_seq
-            startValue: 1
+        - createSequence: { sequenceName: change_reserve_log_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq3
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: products_seq } }
+      changes:
+        - createSequence: { sequenceName: products_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq4
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: product_production_seq } }
+      changes:
+        - createSequence: { sequenceName: product_production_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq5
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: unsold_products_seq } }
+      changes:
+        - createSequence: { sequenceName: unsold_products_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq6
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: variable_expense_headers_seq } }
+      changes:
+        - createSequence: { sequenceName: variable_expense_headers_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq7
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: withdrawals_seq } }
+      changes:
+        - createSequence: { sequenceName: withdrawals_seq, startValue: 1 }
+
+  - changeSet:
+      id: 9-seq8
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not: { sequenceExists: { schemaName: public, sequenceName: variable_expense_items_seq } }
+      changes:
+        - createSequence: { sequenceName: variable_expense_items_seq, startValue: 1 }
