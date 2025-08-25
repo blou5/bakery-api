@@ -1,7 +1,16 @@
 databaseChangeLog:
+
+  # Add person only if missing
   - changeSet:
-      id: 1
+      id: 1-add-person
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            schemaName: public
+            tableName: withdrawals
+            columnName: person
       changes:
         - addColumn:
             tableName: withdrawals
@@ -9,19 +18,45 @@ databaseChangeLog:
               - column:
                   name: person
                   type: VARCHAR(255)
-                  constraints:
-                    nullable: false
+
+  # Add notes only if missing
+  - changeSet:
+      id: 1a-add-notes
+      author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          columnExists:
+            schemaName: public
+            tableName: withdrawals
+            columnName: notes
+      changes:
+        - addColumn:
+            tableName: withdrawals
+            columns:
               - column:
                   name: notes
                   type: TEXT
-                  constraints:
-                    nullable: true
 
+  # Change 'date' column type to DATE only if it's NOT already DATE
   - changeSet:
-      id: 2
+      id: 2-date-to-DATE
       author: Luka Buziu
+      preConditions:
+        onFail: MARK_RAN
+        # Proceed only when the column is NOT already DATE.
+        # If it is already DATE (count=1), the precondition fails and Liquibase MARK_RAN's this changeSet.
+        sqlCheck:
+          expectedResult: 0
+          sql: |
+            SELECT COUNT(*)
+            FROM information_schema.columns
+            WHERE table_schema = 'public'
+              AND table_name = 'withdrawals'
+              AND column_name = 'date'
+              AND data_type = 'date'
       changes:
         - modifyDataType:
             tableName: withdrawals
-            columnName: date  # <-- replace with the actual column name
+            columnName: "date"   # quoted because DATE is a keyword
             newDataType: DATE
