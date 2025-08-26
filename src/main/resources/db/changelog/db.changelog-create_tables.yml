@@ -44,8 +44,8 @@ databaseChangeLog:
               - column: { name: amount, type: INT, constraints: { nullable: false } }
               - column: { name: reason, type: VARCHAR(255) }
               - column: { name: date, type: DATE, constraints: { nullable: false } }
-              - column: { name: person , type: VARCHAR(255) constraints: { nullable: false }}
-              - column: { name: notes,  type: TEXT } # PostgreSQL
+              - column: { name: person , type: VARCHAR(255), constraints: { nullable: false }}
+              - column: { name: notes,  type: TEXT }
 
   - changeSet:
       id: 3
