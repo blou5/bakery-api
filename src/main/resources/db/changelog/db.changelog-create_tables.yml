@@ -43,7 +43,9 @@ databaseChangeLog:
               - column: { name: log_id, type: INT, constraints: { nullable: false } }
               - column: { name: amount, type: INT, constraints: { nullable: false } }
               - column: { name: reason, type: VARCHAR(255) }
-              - column: { name: date, type: TIMESTAMP, constraints: { nullable: false } }  # PostgreSQL
+              - column: { name: date, type: DATE, constraints: { nullable: false } }
+              - column: { name: person , type: VARCHAR(255) constraints: { nullable: false }}
+              - column: { name: notes,  type: TEXT } # PostgreSQL
 
   - changeSet:
       id: 3
@@ -79,6 +81,7 @@ databaseChangeLog:
               - column: { name: unit, type: INT, constraints: { nullable: false } }
               - column: { name: unit_price, type: INT, constraints: { nullable: false } }
               - column: { name: total_price, type: INT, constraints: { nullable: false } }
+
 
   - changeSet:
       id: 5
