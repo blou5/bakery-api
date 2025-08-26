@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @Data
 @RequiredArgsConstructor
 public class WithdrawalsCreateDto {
-    private DailyCashLog log;
+    private Integer log;
 
     private Integer amount;
     private String reason;

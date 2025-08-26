@@ -9,7 +9,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface WithdrawalsMapper {
     @Mapping(target = "withdrawalId", ignore = true)
-    @Mapping(target = "log", expression = "java(mapLogFromId(withdrawalsCreateDto.getLog().getLogId()))")
+    @Mapping(target = "log", expression = "java(mapLogFromId(withdrawalsCreateDto.getLog()))")
     Withdrawals toEntity(WithdrawalsCreateDto withdrawalsCreateDto);
 
     default DailyCashLog mapLogFromId(Integer logId) {

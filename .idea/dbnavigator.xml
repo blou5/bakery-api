@@ -31,7 +31,10 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files />
+    <open-files>
+      <object connection-id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" object-ref="schemas/public/tables/daily_cash_log" />
+      <object connection-id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" object-ref="schemas/public/tables/unsold_products" />
+    </open-files>
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" />
@@ -64,7 +67,11 @@
         <condition column="item_id" operator="!=" value="0" active="true" />
       </filter>
     </filter-actions>
-    <filter-actions connection-id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" dataset="public.unsold_products" active-filter-id="" />
+    <filter-actions connection-id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" dataset="public.unsold_products" active-filter-id="3293a120-ed43-4bd1-bca6-8aa12abe4b9a">
+      <filter id="3293a120-ed43-4bd1-bca6-8aa12abe4b9a" name="0" temporary="false" custom-name="false" type="basic" join-type="AND">
+        <condition column="unsold_id" operator="!=" value="0" active="true" />
+      </filter>
+    </filter-actions>
   </component>
   <component name="DBNavigator.Project.ExecutionManager">
     <retain-sticky-names value="false" />
@@ -84,7 +91,7 @@
           <description value="" />
           <database-type value="POSTGRES" />
           <config-type value="BASIC" />
-          <database-version value="15.13" />
+          <database-version value="15.14" />
           <driver-source value="BUNDLED" />
           <driver-library value="" />
           <driver value="" />
