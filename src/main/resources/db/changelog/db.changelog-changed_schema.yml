@@ -1,62 +1,64 @@
 databaseChangeLog:
 
-  # Add person only if missing
   - changeSet:
-      id: 1-add-person
+      id: 8a-update-denomination-constraint
       author: Luka Buziu
       preConditions:
         onFail: MARK_RAN
-        not:
-          columnExists:
-            schemaName: public
-            tableName: withdrawals
-            columnName: person
-      changes:
-        - addColumn:
-            tableName: withdrawals
-            columns:
-              - column:
-                  name: person
-                  type: VARCHAR(255)
-
-  # Add notes only if missing
-  - changeSet:
-      id: 1a-add-notes
-      author: Luka Buziu
-      preConditions:
-        onFail: MARK_RAN
-        not:
-          columnExists:
-            schemaName: public
-            tableName: withdrawals
-            columnName: notes
-      changes:
-        - addColumn:
-            tableName: withdrawals
-            columns:
-              - column:
-                  name: notes
-                  type: TEXT
-
-  # Change 'date' column type to DATE only if it's NOT already DATE
-  - changeSet:
-      id: 2-date-to-DATE
-      author: Luka Buziu
-      preConditions:
-        onFail: MARK_RAN
-        # Proceed only when the column is NOT already DATE.
-        # If it is already DATE (count=1), the precondition fails and Liquibase MARK_RAN's this changeSet.
+        # If a CHECK that already includes 200 exists, skip (MARK_RAN)
         sqlCheck:
           expectedResult: 0
           sql: |
             SELECT COUNT(*)
-            FROM information_schema.columns
-            WHERE table_schema = 'public'
-              AND table_name = 'withdrawals'
-              AND column_name = 'date'
-              AND data_type = 'date'
+            FROM pg_constraint c
+            WHERE c.conrelid = 'public.change_reserve_log'::regclass
+              AND c.contype  = 'c'
+              AND pg_get_constraintdef(c.oid) ILIKE '%denomination%'
+              AND pg_get_constraintdef(c.oid) ILIKE '%200%'
+
       changes:
-        - modifyDataType:
-            tableName: withdrawals
-            columnName: "date"   # quoted because DATE is a keyword
-            newDataType: DATE
+        # 1) Drop any existing CHECK constraint(s) on column 'denomination' (unknown names)
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: |
+              DO $$
+              DECLARE r RECORD;
+              BEGIN
+                FOR r IN
+                  SELECT c.conname
+                  FROM pg_constraint c
+                  JOIN pg_attribute a
+                    ON a.attrelid = c.conrelid
+                   AND a.attnum  = ANY (c.conkey)
+                 WHERE c.conrelid = 'public.change_reserve_log'::regclass
+                   AND c.contype  = 'c'
+                   AND a.attname  = 'denomination'
+                LOOP
+                  EXECUTE format(
+                    'ALTER TABLE public.change_reserve_log DROP CONSTRAINT IF EXISTS %I',
+                    r.conname
+                  );
+                END LOOP;
+              END $$;
+
+        # 2) Add our new deterministic CHECK constraint (with 200)
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: |
+              ALTER TABLE public.change_reserve_log
+              ADD CONSTRAINT chk_change_reserve_log_denomination
+              CHECK (denomination IN (5,10,20,50,100,200));
+
+      rollback:
+        # Rollback: drop new constraint and recreate the old one without 200
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: |
+              ALTER TABLE public.change_reserve_log
+              DROP CONSTRAINT IF EXISTS chk_change_reserve_log_denomination;
+              ALTER TABLE public.change_reserve_log
+              ADD CONSTRAINT chk_change_reserve_log_denomination
+              CHECK (denomination IN (5,10,20,50,100));
