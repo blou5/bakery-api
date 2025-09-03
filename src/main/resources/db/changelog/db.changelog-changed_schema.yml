@@ -1,5 +1,5 @@
 databaseChangeLog:
-
+  - logicalFilePath: migrations/000_legacy_migrations.yaml
   - changeSet:
       id: 8a-update-denomination-constraint
       author: Luka Buziu
