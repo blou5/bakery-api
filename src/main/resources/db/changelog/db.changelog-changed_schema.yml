@@ -1,6 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: migrations/000_legacy_migrations.yaml
   - changeSet:
+
       id: 8a-update-denomination-constraint
       author: Luka Buziu
       preConditions:
@@ -8,13 +9,7 @@ databaseChangeLog:
         # If a CHECK that already includes 200 exists, skip (MARK_RAN)
         sqlCheck:
           expectedResult: 0
-          sql: |
-            SELECT COUNT(*)
-            FROM pg_constraint c
-            WHERE c.conrelid = 'public.change_reserve_log'::regclass
-              AND c.contype  = 'c'
-              AND pg_get_constraintdef(c.oid) ILIKE '%denomination%'
-              AND pg_get_constraintdef(c.oid) ILIKE '%200%'
+          sql: select 1
 
       changes:
         # 1) Drop any existing CHECK constraint(s) on column 'denomination' (unknown names)
