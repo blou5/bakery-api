@@ -31,9 +31,7 @@
     <last-used-providers />
   </component>
   <component name="DBNavigator.Project.DatabaseFileManager">
-    <open-files>
-      <object connection-id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" object-ref="schemas/public/tables/daily_cash_log" />
-    </open-files>
+    <open-files />
   </component>
   <component name="DBNavigator.Project.DatabaseSessionManager">
     <connection id="1d0fced4-e1b1-4e0b-ad3a-29588bf48862" />
