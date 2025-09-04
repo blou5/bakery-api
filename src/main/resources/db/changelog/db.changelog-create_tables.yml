@@ -139,7 +139,7 @@ databaseChangeLog:
             tableName: change_reserve_log
             columns:
               - column: { name: reserve_log_id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
-              - column: { name: denomination, type: BIGINT, constraints: { nullable: false, checkConstraint: "denomination IN (5,10,20,50,100)" } }
+              - column: { name: denomination, type: BIGINT, constraints: { nullable: false, checkConstraint: "denomination IN (5,10,20,50,100,200,500)" } }
               - column: { name: quantity, type: INT, constraints: { nullable: false } }
               - column: { name: amount, type: BIGINT, constraints: { nullable: false } }
               - column: { name: reserve_type, type: VARCHAR(50), constraints: { nullable: false, checkConstraint: "reserve_type IN ('ADDITION','SUBTRACTION')" } }
