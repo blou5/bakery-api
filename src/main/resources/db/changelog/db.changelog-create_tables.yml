@@ -1,5 +1,5 @@
 databaseChangeLog:
-
+  - logicalFilePath: db/changelog/001-init.yml
   # ============ TABLES ============
 
   - changeSet:
