@@ -55,7 +55,7 @@ databaseChangeLog:
         not: { tableExists: { schemaName: public, tableName: variable_expense_headers } }
       changes:
         - createTable:
-            tableName: variable_expense_headers
+              tableName: variable_expense_headers
             columns:
               - column: { name: expense_id, type: INT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
               - column: { name: log_id, type: INT, constraints: { nullable: false } }

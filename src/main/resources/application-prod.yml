@@ -5,4 +5,4 @@
 
 spring:
   cors:
-    allowed-origins: "http://178.18.249.39:4200"
+    allowed-origins: "http://84.247.142.108:4200"

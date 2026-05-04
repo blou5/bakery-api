@@ -29,7 +29,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("org.postgresql:postgresql:42.7.3")
+    implementation("org.postgresql:postgresql:42.7.11")
     implementation ("org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly ("org.postgresql:postgresql")
     annotationProcessor ("org.projectlombok:lombok")
