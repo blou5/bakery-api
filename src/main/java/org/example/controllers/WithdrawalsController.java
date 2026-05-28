@@ -1,8 +1,10 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.request.create.WithdrawalsCreateDto;
 import org.example.dto.request.update.WithdrawalsUpdateDTO;
+import org.example.dto.response.WithdrawalsResponseDTO;
 import org.example.entity.Withdrawals;
 import org.example.services.WithdrawalsService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,43 +24,43 @@ public class WithdrawalsController {
     private final WithdrawalsService withdrawalsService;
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<Withdrawals>> findAll() {
+    public ResponseEntity<List<WithdrawalsResponseDTO>> findAll() {
         List<Withdrawals> withdrawals = withdrawalsService.findAll();
         if (withdrawals == null || withdrawals.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(withdrawals);
+        return ResponseEntity.ok(withdrawals.stream().map(WithdrawalsResponseDTO::from).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Withdrawals> findById(@PathVariable Integer id) {
+    public ResponseEntity<WithdrawalsResponseDTO> findById(@PathVariable Integer id) {
         return withdrawalsService.findById(id)
+                .map(WithdrawalsResponseDTO::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<Withdrawals> create(@RequestBody WithdrawalsCreateDto withdrawalsCreateDto) {
+    public ResponseEntity<WithdrawalsResponseDTO> create(@Valid @RequestBody WithdrawalsCreateDto withdrawalsCreateDto) {
         Withdrawals saved = withdrawalsService.save(withdrawalsCreateDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(WithdrawalsResponseDTO.from(saved));
     }
 
     @GetMapping("/filteredWithdrawals/{date}")
-    public ResponseEntity<List<Withdrawals>> getFilteredWithdrawals(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<List<WithdrawalsResponseDTO>> getFilteredWithdrawals(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
 
         List<Withdrawals> withdrawFromDate = this.withdrawalsService.getWithdrawFromDate(date);
-        return ResponseEntity.ok().body(withdrawFromDate);
+        return ResponseEntity.ok().body(withdrawFromDate.stream().map(WithdrawalsResponseDTO::from).toList());
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Withdrawals> updateWithdrawal(
+    public ResponseEntity<WithdrawalsResponseDTO> updateWithdrawal(
             @PathVariable Integer id,
-            @RequestBody WithdrawalsUpdateDTO dto) {
-        System.out.println(id);
-        System.out.println(dto.toString());
+            @Valid @RequestBody WithdrawalsUpdateDTO dto) {
+        dto.setWithdrawalId(id);
         Withdrawals updated = withdrawalsService.update(dto);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(WithdrawalsResponseDTO.from(updated));
     }
 
     @DeleteMapping("/{id}")

@@ -1,8 +1,10 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.ChangeReserveLogMapper;
 import org.example.dto.request.create.ChangeReserveLogRequestDTO;
+import org.example.dto.response.ChangeReserveLogRecordResponseDTO;
 import org.example.dto.response.ChangeReserveLogResponseDto;
 import org.example.dto.sealedDto.ChangeReserveActionResponse;
 import org.example.entity.ChangeReserveLog;
@@ -25,14 +27,14 @@ public class ChangeReserveLogController {
 
 
     @GetMapping("/findall")
-    public ResponseEntity<Page<ChangeReserveLog>> findAll(@RequestParam(defaultValue = "0") int page,
-                                                          @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<ChangeReserveLogRecordResponseDTO>> findAll(@RequestParam(defaultValue = "0") int page,
+                                                                           @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<ChangeReserveLog> reserves = changeReserveLogService.findAll(pageable);
         if (reserves == null || reserves.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(reserves);
+        return ResponseEntity.ok(reserves.map(ChangeReserveLogRecordResponseDTO::from));
     }
 
     @GetMapping("/pending-summary")
@@ -42,14 +44,15 @@ public class ChangeReserveLogController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChangeReserveLog> findById(@PathVariable Integer id) {
+    public ResponseEntity<ChangeReserveLogRecordResponseDTO> findById(@PathVariable Integer id) {
         return changeReserveLogService.findById(id)
+                .map(ChangeReserveLogRecordResponseDTO::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/create")
-    public ResponseEntity<ChangeReserveActionResponse> create(@RequestBody ChangeReserveLogRequestDTO reserve) {
+    public ResponseEntity<ChangeReserveActionResponse> create(@Valid @RequestBody ChangeReserveLogRequestDTO reserve) {
         ChangeReserveActionResponse save = changeReserveLogService.save(reserve);
         return ResponseEntity.status(HttpStatus.CREATED).body(save);
     }

@@ -1,8 +1,10 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.ProductMapper;
 import org.example.dto.request.create.ProductCreateDTO;
+import org.example.dto.response.ProductResponseDTO;
 import org.example.entity.Product;
 import org.example.services.ProductService;
 import org.springframework.http.HttpStatus;
@@ -21,32 +23,33 @@ public class ProductController {
 
 
     @GetMapping("/findAll")
-    public ResponseEntity<List<Product>> findAll() {
+    public ResponseEntity<List<ProductResponseDTO>> findAll() {
         List<Product> products = productService.findAll();
         if (products == null || products.isEmpty()) {
             return ResponseEntity.noContent().build();
         }
-        return ResponseEntity.ok(products);
+        return ResponseEntity.ok(products.stream().map(ProductResponseDTO::from).toList());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> findById(@PathVariable Integer id) {
+    public ResponseEntity<ProductResponseDTO> findById(@PathVariable Integer id) {
         return productService.findById(id)
+                .map(ProductResponseDTO::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Product> create(@RequestBody ProductCreateDTO product) {
+    public ResponseEntity<ProductResponseDTO> create(@Valid @RequestBody ProductCreateDTO product) {
         Product entity = productMapper.toEntity(product);
         Product saved = productService.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProductResponseDTO.from(saved));
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Product> update(@RequestBody Product product) {
+    public ResponseEntity<ProductResponseDTO> update(@RequestBody Product product) {
          Product saved = productService.save(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ProductResponseDTO.from(saved));
     }
 
 // TODO see the best practices for deleting an item

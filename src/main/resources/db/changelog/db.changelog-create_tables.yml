@@ -59,7 +59,6 @@ databaseChangeLog:
                   type: VARCHAR(20)
                   constraints:
                     nullable: true
-                    checkConstraint: "status IN ('Equal','Less','More','Not Completed')"
 
   - changeSet:
       id: 2

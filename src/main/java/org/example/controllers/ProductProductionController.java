@@ -1,7 +1,7 @@
 package org.example.controllers;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.ProductionMapper;
-import org.example.dto.request.create.ProductCreateDTO;
 import org.example.dto.request.create.ProductionCreateDTO;
 import org.example.dto.request.update.ProductProductionUpdate;
 import org.example.dto.response.ProductionDto;
@@ -36,14 +36,15 @@ public class ProductProductionController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProductProduction> findById(@PathVariable Integer id) {
-        return productProductionService.findById(id)
+    public ResponseEntity<ProductionDto> findById(@PathVariable Integer id) {
+        return productProductionService.findDetailById(id)
+                .map(productionMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ProductionDto> create(@RequestBody ProductionCreateDTO production) {
+    public ResponseEntity<ProductionDto> create(@Valid @RequestBody ProductionCreateDTO production) {
         ProductProduction entity = productionMapper.toEntity(production);
         ProductProduction saved = productProductionService.save(entity);
         Optional<ProductProduction> byId = productProductionService.findDetailById(saved.getProductionId());
@@ -54,14 +55,13 @@ public class ProductProductionController {
     @PutMapping("/update/{id}")
     public ResponseEntity<ProductionDto> update(
             @PathVariable Integer id,
-            @RequestBody ProductProductionUpdate production) {
+            @Valid @RequestBody ProductProductionUpdate production) {
 
         Optional<ProductProduction> existing = productProductionService.findById(id);
         if (existing.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
-        System.out.println(production.toString());
         // Map DTO to Entity, preserving the existing ID
         ProductProduction updated = productionMapper.dtoToEntity(production);
         updated.setProductionId(id);
@@ -77,7 +77,6 @@ public class ProductProductionController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
         productProductionService.deleteById(id);
-        System.out.println(id);
         return ResponseEntity.noContent().build();
     }
 }

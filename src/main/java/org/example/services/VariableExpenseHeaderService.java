@@ -21,9 +21,7 @@ public class VariableExpenseHeaderService {
     }
 
     public Optional<VariableExpenseHeader> findById(Integer id) {
-        Optional<VariableExpenseHeader> byId = variableExpenseHeaderRepository.findById(id);
-        byId.ifPresent(variableExpenseHeader -> System.out.println(variableExpenseHeader.getExpenseHeaders()));
-        return byId;
+        return variableExpenseHeaderRepository.findById(id);
     }
 
     @Transactional

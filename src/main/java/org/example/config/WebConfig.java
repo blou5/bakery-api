@@ -10,7 +10,7 @@ import java.util.List;
 
 @Configuration
 public class WebConfig {
-    @Value("${spring.cors.allowed-origins}")
+    @Value("${spring.cors.allowed-origins:http://localhost:4200}")
     private List<String> allowedOrigins;
 
     @Bean
@@ -19,11 +19,11 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins(allowedOrigins.get(0)) // <- no trailing slash
+                        .allowedOrigins(allowedOrigins.toArray(String[]::new))
                         .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .exposedHeaders("Authorization", "Content-Disposition")
-                        .allowCredentials(true)      // set to false if you don’t use cookies/Authorization
+                        .allowCredentials(true)
                         .maxAge(3600);
             }
         };

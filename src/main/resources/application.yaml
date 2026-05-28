@@ -3,7 +3,6 @@
 spring:
 
   main:
-    allow-circular-references: true
     web-application-type: SERVLET
   jpa:
     database: default
@@ -30,7 +29,7 @@ spring:
     driver-class-name: org.postgresql.Driver
     url: ${DATABASE_URL:jdbc:postgresql://postgres:5432/bakery_shop}   # fallback not localhost
     username: ${DATABASE_USER:bakery}
-    password: ${DATABASE_PASSWORD:"N&LBAKERY"}
+    password: ${DATABASE_PASSWORD:}
 #  profiles:
 #    active: local
 #

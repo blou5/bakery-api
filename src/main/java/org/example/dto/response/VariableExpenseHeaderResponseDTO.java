@@ -4,7 +4,6 @@ package org.example.dto.response;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
-import org.example.entity.VariableExpenseItem;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -23,6 +22,6 @@ public class VariableExpenseHeaderResponseDTO {
 
     private LocalDate expenseDate;
 
-    private List<VariableExpenseItem> expenseHeaders;
+    private List<VariableExpenseItemResponseDTO> expenseHeaders;
 
 }

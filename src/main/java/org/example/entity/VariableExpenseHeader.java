@@ -40,5 +40,6 @@ public class VariableExpenseHeader {
 
     @OneToMany(mappedBy = "expenseHeader", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
+    @Builder.Default
     private List<VariableExpenseItem> expenseHeaders = new ArrayList<>();
 }

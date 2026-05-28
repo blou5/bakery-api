@@ -9,6 +9,8 @@ import org.mapstruct.Mapping;
 public interface DailyCashLogMapper {
 
     @Mapping(target = "logId", ignore = true)
+    @Mapping(target = "expectedCash", ignore = true)
+    @Mapping(target = "status", ignore = true)
     DailyCashLog toEntity(DailyCashLogCreateDTO dto);
 
 }

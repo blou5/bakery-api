@@ -1,0 +1,63 @@
+databaseChangeLog:
+  - property:
+      name: schemaName
+      value: public
+
+  - changeSet:
+      id: 1-fix-daily-cash-log-status-values
+      author: codex
+      changes:
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: |
+              DO $$
+              DECLARE
+                  constraint_name text;
+              BEGIN
+                  SELECT con.conname
+                  INTO constraint_name
+                  FROM pg_constraint con
+                  JOIN pg_class rel ON rel.oid = con.conrelid
+                  JOIN pg_namespace nsp ON nsp.oid = rel.relnamespace
+                  WHERE nsp.nspname = 'public'
+                    AND rel.relname = 'daily_cash_log'
+                    AND con.contype = 'c'
+                    AND pg_get_constraintdef(con.oid) LIKE '%status%';
+
+                  IF constraint_name IS NOT NULL THEN
+                      EXECUTE format('ALTER TABLE public.daily_cash_log DROP CONSTRAINT %I', constraint_name);
+                  END IF;
+              END $$;
+
+              UPDATE public.daily_cash_log
+              SET status = CASE status
+                  WHEN 'Equal' THEN 'EQUAL'
+                  WHEN 'Less' THEN 'LESS'
+                  WHEN 'More' THEN 'MORE'
+                  WHEN 'Not Completed' THEN 'NOT_COMPLETED'
+                  ELSE status
+              END;
+
+              ALTER TABLE public.daily_cash_log
+              ADD CONSTRAINT chk_daily_cash_log_status
+              CHECK (status IN ('EQUAL','LESS','MORE','NOT_COMPLETED'));
+      rollback:
+        - sql:
+            splitStatements: false
+            stripComments: true
+            sql: |
+              ALTER TABLE public.daily_cash_log DROP CONSTRAINT IF EXISTS chk_daily_cash_log_status;
+
+              UPDATE public.daily_cash_log
+              SET status = CASE status
+                  WHEN 'EQUAL' THEN 'Equal'
+                  WHEN 'LESS' THEN 'Less'
+                  WHEN 'MORE' THEN 'More'
+                  WHEN 'NOT_COMPLETED' THEN 'Not Completed'
+                  ELSE status
+              END;
+
+              ALTER TABLE public.daily_cash_log
+              ADD CONSTRAINT chk_daily_cash_log_status
+              CHECK (status IN ('Equal','Less','More','Not Completed'));

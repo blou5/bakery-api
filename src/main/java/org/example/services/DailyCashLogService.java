@@ -59,8 +59,11 @@ public class DailyCashLogService {
 
     public Optional<DailyCashLog> getLastCashLog (LocalDate localDate){
         List<DailyCashLog> byLogDate = dailyCashLogRepository.findByLogDate(localDate);
+        if (byLogDate.isEmpty()) {
+            return Optional.empty();
+        }
         if (byLogDate.size() > 1){
-            throw new RuntimeException("There are more then a Daily Cash log provided");
+            throw new IllegalStateException("There is more than one DailyCashLog for date: " + localDate);
         }
 
         return Optional.of(byLogDate.getFirst());
@@ -70,7 +73,6 @@ public class DailyCashLogService {
     public DailyCashLog update(Integer logId, DailyCashLog dto) {
         DailyCashLog existing = dailyCashLogRepository.findById(logId)
                 .orElseThrow(() -> new EntityNotFoundException("DailyCashLog not found with ID " + logId));
-        System.out.println(dto.toString());
         // Apply updates manually or via mapper
         existing.setLogDate(dto.getLogDate());
         existing.setOpeningCash(dto.getOpeningCash());
@@ -86,7 +88,7 @@ public class DailyCashLogService {
         if (dto.getExpectedCash() != null && dto.getClosingCash() != null) {
             int expected = dto.getExpectedCash();
             int closing = dto.getClosingCash();
-            int withdrawn= dto.getCashWithdrawn();
+            int withdrawn = Optional.ofNullable(dto.getCashWithdrawn()).orElse(0);
             int total = closing + withdrawn;
             if (expected == total) {
                 existing.setStatus(DailyCashLog.Status.EQUAL);
@@ -99,7 +101,6 @@ public class DailyCashLogService {
             existing.setStatus(DailyCashLog.Status.NOT_COMPLETED);
         }
         DailyCashLog save = dailyCashLogRepository.save(existing);
-        System.out.println(save.toString());
         return save;
     }
 
@@ -126,7 +127,7 @@ public class DailyCashLogService {
                 .mapToInt(Withdrawals::getAmount)
                 .sum();
 
-        return log.getOpeningCash() + totalProducedValue - totalUnsoldValue - totalWithdrawals;
+        return Optional.ofNullable(log.getOpeningCash()).orElse(0) + totalProducedValue - totalUnsoldValue - totalWithdrawals;
     }
 
 }

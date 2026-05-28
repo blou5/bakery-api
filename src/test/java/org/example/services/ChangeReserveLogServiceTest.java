@@ -81,7 +81,6 @@ class ChangeReserveLogServiceTest {
         assertThat(log1.getStatus()).isEqualTo(Status.LIQUIDIFIED);
         assertThat(log2.getQuantity()).isEqualTo(3);
         assertThat(log2.getAmount()).isEqualTo(300);
-        System.out.println(log2.toString());
         verify(repository).save(argThat(split -> split.getAmount() == 200 && split.getStatus() == Status.LIQUIDIFIED));
     }
 

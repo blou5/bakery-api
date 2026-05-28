@@ -1,8 +1,10 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import  lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.DailyCashLogMapper;
 import org.example.dto.request.create.DailyCashLogCreateDTO;
+import org.example.dto.response.DailyCashLogResponseDTO;
 import org.example.entity.DailyCashLog;
 import org.example.services.DailyCashLogService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -22,33 +24,34 @@ public class DailyCashLogController {
     private final DailyCashLogMapper dailyCashLogMapper;
 
     @GetMapping("/find")
-    public ResponseEntity<List<DailyCashLog>> findAll() {
+    public ResponseEntity<List<DailyCashLogResponseDTO>> findAll() {
         List<DailyCashLog> logs = dailyCashLogService.findAll();
         if (logs == null || logs.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content
         }
-        return ResponseEntity.ok(logs); // 200 OK
+        return ResponseEntity.ok(logs.stream().map(DailyCashLogResponseDTO::from).toList()); // 200 OK
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DailyCashLog> findById(@PathVariable Integer id) {
+    public ResponseEntity<DailyCashLogResponseDTO> findById(@PathVariable Integer id) {
         return dailyCashLogService.findById(id)
+                .map(DailyCashLogResponseDTO::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping("/add")
-    public ResponseEntity<DailyCashLog> save(@RequestBody DailyCashLogCreateDTO dto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(dailyCashLogService.create(dto));
+    public ResponseEntity<DailyCashLogResponseDTO> save(@Valid @RequestBody DailyCashLogCreateDTO dto) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(DailyCashLogResponseDTO.from(dailyCashLogService.create(dto)));
     }
 
     @PutMapping("/{logId}")
-    public ResponseEntity<DailyCashLog> update(
+    public ResponseEntity<DailyCashLogResponseDTO> update(
             @PathVariable Integer logId,
             @RequestBody DailyCashLog entity
     ) {
         DailyCashLog updated = dailyCashLogService.update(logId, entity);
-        return ResponseEntity.ok(updated);
+        return ResponseEntity.ok(DailyCashLogResponseDTO.from(updated));
     }
 
     @DeleteMapping("/{id}")
@@ -58,8 +61,9 @@ public class DailyCashLogController {
     }
 
     @GetMapping("/findLast/{date}")
-    public ResponseEntity<DailyCashLog> getLastCashLog(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<DailyCashLogResponseDTO> getLastCashLog(@PathVariable @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return dailyCashLogService.getLastCashLog(date)
+                .map(DailyCashLogResponseDTO::from)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

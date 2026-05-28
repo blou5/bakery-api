@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.UnsoldProductMapper;
 import org.example.dto.request.create.UnsoldProductCreateDTO;
@@ -37,26 +38,26 @@ public class UnsoldProductController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UnsoldProduct> findById(@PathVariable Integer id) {
-        return unsoldProductService.findById(id)
+    public ResponseEntity<UnsoldProductDto> findById(@PathVariable Integer id) {
+        return unsoldProductService.findWithDetailsById(id)
+                .map(unsoldProductMapper::toDto)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<UnsoldProductDto> create(@RequestBody UnsoldProductCreateDTO unsoldProduct) {
+    public ResponseEntity<UnsoldProductDto> create(@Valid @RequestBody UnsoldProductCreateDTO unsoldProduct) {
         UnsoldProduct entity = unsoldProductMapper.toEntity(unsoldProduct);
         UnsoldProduct saved = unsoldProductService.save(entity);
         List<UnsoldProductDto> list = unsoldProductService.findWithDetailsById(saved.getUnsoldId()).stream().map(unsoldProductMapper::toDto).toList();
-        System.out.println(list.get(0).toString());
         return ResponseEntity.status(HttpStatus.CREATED).body(list.get(0));
     }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<UnsoldProductDto> update(
             @PathVariable Integer id,
-            @RequestBody UnsoldUpdateProductDto unsoldUpdateProductDto) {
+            @Valid @RequestBody UnsoldUpdateProductDto unsoldUpdateProductDto) {
 
         Optional<UnsoldProduct> existing = unsoldProductService.findWithDetailsById(id);
         if (existing.isEmpty()) {
@@ -66,7 +67,6 @@ public class UnsoldProductController {
         unsoldProduct.setQuantityUnsold(unsoldUpdateProductDto.getQuantityUnsold());
         UnsoldProduct save = unsoldProductService.save(unsoldProduct);
         UnsoldProductDto dto = unsoldProductMapper.toDto(save);
-        System.out.println(dto.toString());
         return ResponseEntity.ok(dto);
     }
 

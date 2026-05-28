@@ -1,5 +1,6 @@
 package org.example.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.dto.mapper.VariableExpenseHeaderMapper;
 import org.example.dto.request.update.VariableExpenseHeaderUpdateDTO;
@@ -35,25 +36,25 @@ public class VariableExpenseHeaderController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<VariableExpenseHeader> findById(@PathVariable Integer id) {
+    public ResponseEntity<VariableExpenseHeaderResponseDTO> findById(@PathVariable Integer id) {
         return variableExpenseHeaderService.findById(id)
+                .map(mapper::toDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<VariableExpenseHeader> create(@RequestBody VariableExpenseHeaderCreateDTO header) {
-        System.out.println(header.toString());
+    public ResponseEntity<VariableExpenseHeaderResponseDTO> create(@Valid @RequestBody VariableExpenseHeaderCreateDTO header) {
         VariableExpenseHeader entity = mapper.toEntity(header);
         VariableExpenseHeader saved = variableExpenseHeaderService.save(entity);
-        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mapper.toDTO(saved));
     }
 
 
     @PutMapping("/update")
     public ResponseEntity<VariableExpenseHeaderResponseDTO> update(
-            @RequestBody VariableExpenseHeaderUpdateDTO updatedDto) {
+            @Valid @RequestBody VariableExpenseHeaderUpdateDTO updatedDto) {
         Optional<VariableExpenseHeader> existingOpt = variableExpenseHeaderService.findById(updatedDto.getExpenseId());
         if (existingOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -61,15 +62,12 @@ public class VariableExpenseHeaderController {
         VariableExpenseHeader updated = mapper.toEntity(updatedDto);
         updated.setLog(existingOpt.get().getLog());
         updated.setExpenseHeaders(existingOpt.get().getExpenseHeaders());
-        updated.setExpenseDate(updated.getExpenseDate().plusDays(1));
         VariableExpenseHeader saved = variableExpenseHeaderService.save(updated);
-        System.out.println(updatedDto.getExpenseDate());
         return ResponseEntity.ok(mapper.toDTO(saved));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Integer id) {
-        System.out.println(id);
         variableExpenseHeaderService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
